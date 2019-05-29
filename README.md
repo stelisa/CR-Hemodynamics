@@ -1,2 +1,2 @@
-# Blood-Pressure-vs-Circadian-Rhythm
-This repository contains the file of blood pressure vs circadian rhythm work I do at NYMU
+Analysis of circadian rhythms in Hemodynamics in different datasets.
+@NYMU 2019
