@@ -130,3 +130,4 @@ def unusual_sleep_lineplot(csv_file, final_id_list, name, start, end):
     sns.set(font_scale=0.8)
     ax = sns.lineplot(x='TIME(o\'clock)',y='mmHg', hue='BP', data=df_line, markers=True).set_title('%s_lineplot'%(name))
     plt.savefig('%s_unusualsleep_%d_%d.png'%(name,start,end), dpi=480)
+    plt.clf() #clear the figure, avoid overwritten when running multiple figures
