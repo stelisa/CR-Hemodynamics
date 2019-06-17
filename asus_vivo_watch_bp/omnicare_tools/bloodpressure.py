@@ -19,7 +19,7 @@ class Blood_pressure():
         print (df)
     
     #3
-    def preprocess(self,name):
+    def preprocess_lineplot(self,name):
         '''
         1. select the columns of interest
         2. eliminate rows when value = -1
@@ -41,4 +41,31 @@ class Blood_pressure():
             return result
         
         df['time'] = df['time'].apply(time_delete_year).apply(time_delete_minute) # adjust time to hour
-        df.to_csv('%s_clean.csv'%(name)) # save csv file
+        df.to_csv('bp_hr/clean/%s_clean.csv'%(name)) # save csv file
+        
+        clean_csv = pd.read_csv('bp_hr/clean/%s_clean.csv'%(name))
+        
+        
+        #Draw a lineplot: x-axis = hour; y-axis = bp and hr(average sys and dia)
+        def lineplot(clean_csv):
+            df = clean_csv
+            time = df.groupby('time')
+            #print(type(time)) # check the data type 
+            #print(time.size()) # to know how large is the data in each column
+            #print(time.groups) # to know the details of each column and data
+            #print(time.get_group(12)) # get specific group e.g.12,
+
+            table = time.mean() #calculate the mean of each time group
+            #print(table['hr']) #you can print a single column
+
+            plt.plot(table['sys'], label='systolic bp')
+            plt.plot(table['dia'], label='diastolic bp')
+            plt.plot(table['hr'], label='heart rate')
+            plt.legend(loc='lower right')
+            plt.xlabel('Time(hour)')
+            plt.ylabel('mmHg, heart rate/min')
+            plt.xticks(np.linspace(0,23,24))
+            plt.savefig('bp_hr/fig/%s_bp_hr_lineplot'%(name))
+            return
+            
+        lineplot(clean_csv) #use this function right away
