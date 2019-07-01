@@ -7,18 +7,18 @@ import numpy as np
 
 class Blood_pressure():
     
-    #1
+    # inital function
     def __init__(self, csv_file):
         # read blood pressure csv file 
         self.df = pd.read_csv(csv_file)
     
-    #2
+    # showhead function is based on pandas function
     def showhead(self, rows):
         # show rows of dataframe    
         df = self.df.head(rows)
         print (df)
     
-    #3
+    # data preprocess function 
     def preprocess(self,name):
         '''
         1. select the columns of interest
@@ -28,23 +28,13 @@ class Blood_pressure():
         '''
         self.name = name # customized name
         df = self.df[['hr','time','sys','dia']] # select specific columns
-        df = df[df.sys != -1] # remove rows by specific value
-        
-        def time_delete_year(t):
-            (y,hm) = t.split() # split year and hour:minute:second
-            result = hm # return only hour:minute:second
-            return result
-        
-        def time_delete_minute(t):
-            (h,m,s) = t.split(':') # split data by colon ':'
-            result = int(h) # return only hour
-            return result
-        
-        df['time'] = df['time'].apply(time_delete_year).apply(time_delete_minute) # adjust time to hour
-        df.to_csv('bp_hr/clean/%s_clean.csv'%(name)) # save csv file
-        
+        df = df[df.sys != -1] # remove rows by specific 
+        df["original_id"] = df.index
+        df["time"] = df["time"].apply(lambda x: int(x.split()[1].split(":")[0]))
+        df.to_csv('bp_hr/clean/%s_clean.csv'%(name), index=False) # save csv file
         self.clean_csv = pd.read_csv('bp_hr/clean/%s_clean.csv'%(name))
-        
+    
+    # function of calculation mean of the blood pressure and heart rate 
     def mean_table(self, df = pd.DataFrame(), group = "time", showTable = False, row = 10):
         '''
         1. calculate mean of the blood pressure and the heart rate
@@ -61,9 +51,10 @@ class Blood_pressure():
             print(table.head(row))
         return table.mean()
     
+    # function of calculation stndarf deviation of the blood pressure and the heart rate
     def standard_deviation_table(self, df = pd.DataFrame(), group = "time", showTable = False, row = 10):
         '''
-        1. calculate mean of the blood pressure and the heart rate
+        1. calculate standard deviation of the blood pressure and the heart rate
         2. return pandas dataframe with group table
         '''
         #print(type(time)) # check the data type 
