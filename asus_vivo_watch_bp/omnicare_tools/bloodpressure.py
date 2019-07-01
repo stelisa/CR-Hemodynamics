@@ -57,7 +57,8 @@ class Blood_pressure():
 
             table = time.mean() #calculate the mean of each time group
             #print(table['hr']) #you can print a single column
-
+            
+            plt.title("24 Hours Blood Pressure Plot")
             plt.plot(table['sys'], label='systolic bp')
             plt.plot(table['dia'], label='diastolic bp')
             plt.plot(table['hr'], label='heart rate')
