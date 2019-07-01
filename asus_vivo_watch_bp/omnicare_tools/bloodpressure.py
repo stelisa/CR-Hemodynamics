@@ -56,10 +56,16 @@ class Blood_pressure():
             #print(time.get_group(12)) # get specific group e.g.12,
 
             table = time.mean() #calculate the mean of each time group
+            standardDeviation = time.std()
+            print(standardDeviation.head(5))
             #print(table['hr']) #you can print a single column
             
             plt.title("24 Hours Blood Pressure Plot")
-            plt.plot(table['sys'], label='systolic bp')
+            #plt.errorbar(x, y + 3, yerr=yerr, label='both limits (default)')
+            plt.errorbar(table.index, table['sys'], yerr = standardDeviation['sys'], label='systolic bp')
+            plt.errorbar(table.index, table['dia'], yerr = standardDeviation['dia'], label='diastolic bp')
+            plt.errorbar(table.index, table['hr'], yerr = standardDeviation['hr'], label='heart rate')
+#            plt.plot(table['sys'], label='systolic bp')
             plt.plot(table['dia'], label='diastolic bp')
             plt.plot(table['hr'], label='heart rate')
             plt.legend(loc='lower right')
