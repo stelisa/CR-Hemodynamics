@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
+import time
 
 class Blood_pressure():
     
@@ -11,6 +12,7 @@ class Blood_pressure():
     def __init__(self, csv_file):
         # read blood pressure csv file 
         self.df = pd.read_csv(csv_file)
+        self.date = time.strftime("%Y%m%d",time.localtime())
     
     # showhead function is based on pandas function
     def showhead(self, rows):
@@ -70,42 +72,42 @@ class Blood_pressure():
         return standardDeviation
         
     #Draw a lineplot: x-axis = hour; y-axis = bp and hr(average sys and dia)
-    def lineplot(self, saveFile = False, showImage = True, fileName = "lineplot"):
+    def lineplot(self, saveFile = False, showImage = True, fileName = "lineplot", title = "24 Hours Blood Pressure Plot"):
         table = self.mean_table() #calculate the mean of each time group
         #print(table['hr']) #you can print a single column
         
-        plt.title("%s 24 Hours Blood Pressure Plot"%(self.name))
+        plt.title("%s "%(self.name) + title)
         plt.plot(table['sys'], label='systolic bp')
         plt.plot(table['dia'], label='diastolic bp')
         plt.plot(table['hr'], label='heart rate')
-        plt.legend(loc='lower right')
+        plt.legend(loc='lower right', bbox_to_anchor=(1.4, 0.2))
         plt.xlabel('Time(hour)')
         plt.ylabel('mmHg, heart rate/min')
         plt.xticks(np.linspace(0,23,24))
         if saveFile:
-            plt.savefig('bp_hr/fig/%s_bp_hr_%s'%(self.name, fileName))
+            plt.savefig('bp_hr/fig/%s_bp_hr_%s_%s'%(self.name, self.date, fileName))
         if showImage:
             plt.show()
         plt.clf()
         return
     
         #Draw a lineplot: x-axis = hour; y-axis = bp and hr(average sys and dia)
-    def errorbar(self, saveFile = False, showImage = True, fileName = "lineplot"):
+    def errorbar(self, saveFile = False, showImage = True, fileName = "errorbar", title = "24 Hours Blood Pressure Plot"):
         table = self.mean_table() #calculate the mean of each time group
         standardDeviation = self.standard_deviation_table()
         #print(table['hr']) #you can print a single column
         
-        plt.title("%s 24 Hours Blood Pressure Plot"%(self.name))
+        plt.title("%s "%(self.name) + title)
         #plt.errorbar(x, y + 3, yerr=yerr, label='both limits (default)')
         plt.errorbar(table.index, table['sys'], yerr = standardDeviation['sys'], label='systolic bp')
         plt.errorbar(table.index, table['dia'], yerr = standardDeviation['dia'], label='diastolic bp')
         plt.errorbar(table.index, table['hr'], yerr = standardDeviation['hr'], label='heart rate')
-        plt.legend(loc='lower right')
+        plt.legend(loc='lower right', bbox_to_anchor=(1.4, 0.2))
         plt.xlabel('Time(hour)')
         plt.ylabel('mmHg, heart rate/min')
         plt.xticks(np.linspace(0,23,24))
         if saveFile:
-            plt.savefig('bp_hr/fig/%s_bp_hr_%s'%(self.name, fileName))
+            plt.savefig('bp_hr/fig/%s_bp_hr_%s_%s'%(self.name, self.date, fileName))
         if showImage:
             plt.show()
         plt.clf()
