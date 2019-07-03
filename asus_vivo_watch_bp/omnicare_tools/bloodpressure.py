@@ -15,7 +15,6 @@ class Blood_pressure():
         
         # get data start year and date
         self.startDate = self.df["time"].iloc[0].split()[0]
-        print(self.startDate)
         
         # get data end year and date
         self.endDate = self.df["time"].iloc[-1].split()[0]
@@ -85,7 +84,10 @@ class Blood_pressure():
         plt.ylabel('mmHg, heart rate/min')
         plt.xticks(np.linspace(0,23,24))
         if saveFile:
-            plt.savefig('bp_hr/fig/%s_bp_hr_from_%s_to_%s_%s_%s'%(self.name, self.startDate.replace("-",""), self.endDate.replace("-",""), self.date, fileName), bbox_inches="tight")
+            plt.savefig('bp_hr/fig/%s_bp_hr_from_%s_to_%s_%s_%s'%(self.name,
+                                                                  self.startDate.replace("-",""),
+                                                                  self.endDate.replace("-",""),
+                                                                  self.date, fileName), bbox_inches="tight")
         if showImage:
             plt.show()
         plt.clf()
@@ -105,7 +107,10 @@ class Blood_pressure():
         plt.ylabel('mmHg, heart rate/min')
         plt.xticks(np.linspace(0,23,24))
         if saveFile:
-            plt.savefig('bp_hr/fig/%s_bp_hr_from_%s_to_%s_%s_%s'%(self.name, self.startDate.replace("-",""), self.endDate.replace("-",""), self.date, fileName), bbox_inches="tight")
+            plt.savefig('bp_hr/fig/%s_bp_hr_from_%s_to_%s_%s_%s'%(self.name,
+                                                                  self.startDate.replace("-",""),
+                                                                  self.endDate.replace("-",""),
+                                                                  self.date, fileName), bbox_inches="tight")
         if showImage:
             plt.show()
         plt.clf()
