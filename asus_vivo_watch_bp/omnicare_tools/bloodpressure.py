@@ -8,9 +8,9 @@ import time
 
 class Blood_pressure():
     
-    # inital function
     def __init__(self, csv_file):
-        # read blood pressure csv file 
+        # initial function
+        # read blood pressure csv file download from OmniCare website 
         self.df = pd.read_csv(csv_file)
         
         # get data start year and date
@@ -22,46 +22,46 @@ class Blood_pressure():
         # get local time
         self.date = time.strftime("%Y%m%d",time.localtime())
     
-    # showhead function is based on pandas function
-    def showhead(self, rows):
-        # show rows of dataframe    
-        print (self.df.head(rows))
-        return
     
-    # data preprocess function 
-    def preprocess(self, name):
+    def showhead(self, rows):
+        # This function is based on pandas .head() function
+        # show rows of dataframe, input arbitary row number    
+        df = self.df.head(rows) 
+        print (df)
+    
+     
+    def preprocess(self,name): 
         '''
-        1. select the columns of interest
-        2. eliminate rows when value = -1
-        3. adjust 'time' (hours only)
-        4. save clean dataframe to csv file with customized name (name)     
+        Save and manipulate data we are interested and save it to a csv file.
+        Input: bp_hr/raw/blood_pressure.csv download from OmniCare website
+        Output: save the cleaned.csv file in /bp_hr/clean 
         '''
         self.name = name # customized name
-        df = self.df[['hr','time','sys','dia']] # select specific columns
-        df = df[df.sys != -1] # remove rows by specific 
-        df["original_id"] = df.index
-        df["time"] = df["time"].apply(lambda x: int(x.split()[1].split(":")[0]))
-        df.to_csv('bp_hr/clean/%s_clean.csv'%(name), index=False) # save csv file
+        df = self.df[['hr','time','sys','dia']] # select specific interest columns
+        df = df[df.sys != -1] # remove rows when value = -1 
+        df["original_id"] = df.index # reset index
+        df["time"] = df["time"].apply(lambda x: int(x.split()[1].split(":")[0])) # adjust 'time' (hours only)
+        df.to_csv('bp_hr/clean/%s_clean.csv'%(name), index=False) # save cleaned.csv file
         self.clean_csv = pd.read_csv('bp_hr/clean/%s_clean.csv'%(name))
-    
-    # function of calculation mean of the blood pressure and heart rate 
+        
     def mean_table(self, df = pd.DataFrame(), group = "time", showTable = False, row = 10):
         '''
-        1. calculate mean of the blood pressure and the heart rate
-        2. return pandas dataframe with group table
+        Calculate mean blood pressure and heart rate of preprocess() output
+        Input: preprocess() output
+        Output: return pandas dataframe with mean blood pressure & heart rate by group 
         '''
-        if df.empty:
+        if df.empty:               # if df is empty (no input), then it will take the output of preprocess() 
             df = self.clean_csv
-        table = df.groupby(group)
-        if showTable:
+        table = df.groupby(group)  
+        if showTable:              # showTable = True
             print(table.head(row))
         return table.mean()
     
-    # function of calculation stndarf deviation of the blood pressure and the heart rate
     def standard_deviation_table(self, df = pd.DataFrame(), group = "time", showTable = False, row = 10):
         '''
-        1. calculate standard deviation of the blood pressure and the heart rate
-        2. return pandas dataframe with group table
+        Calculate standard deviation (std) of blood pressure and heart rate
+        Input: preprocess() output
+        Output: return pandas dataframe with std of blood pressure & heart rate by group
         '''
         if df.empty:
             df = self.clean_csv
@@ -71,9 +71,14 @@ class Blood_pressure():
             print(standardDeviation.head(row))
         return standardDeviation
         
-    #Draw a lineplot: x-axis = hour; y-axis = bp and hr(average sys and dia)
     def lineplot(self, saveFile = False, showImage = True, fileName = "lineplot", title = "24 Hours Blood Pressure Plot"):
+        '''
+        lineplot; x-axis = hour; y-axis = bp and hr (average sys and dia); with figure lengend
+        Input: preprocess() output
+        Output: bp_hr/.png figure file
+        '''
         table = self.mean_table() #calculate the mean of each time group
+        #print(table['hr']) #you can print a single column
         
         plt.title("%s from %s to %s "%(self.name, self.startDate.replace("-","/"), self.endDate.replace("-","/")) + title)
         plt.plot(table['sys'], label='systolic bp')
@@ -90,14 +95,19 @@ class Blood_pressure():
                                                                   self.date, fileName), bbox_inches="tight")
         if showImage:
             plt.show()
-        plt.clf()
+        plt.clf() # clean the figure
         return
-    
-        #Draw a lineplot: x-axis = hour; y-axis = bp and hr(average sys and dia)
+ 
     def errorbar(self, saveFile = False, showImage = True, fileName = "errorbar", title = "24 Hours Blood Pressure Plot"):
-        table = self.mean_table() #calculate the mean of each time group
-        standardDeviation = self.standard_deviation_table()
-        
+        '''
+        lineplot with errorbar; x-axis = hour; y-axis = bp and hr (average sys and dia); with figure legend
+        Input: preprocess() output
+        Output: bp_hr/.png figure file
+        '''
+        table = self.mean_table() #calculate the mean in each time group
+        standardDeviation = self.standard_deviation_table() #calcualte the std in each time group
+        #print(table['hr']) #you can print a single column
+
         plt.title("%s from %s to %s "%(self.name, self.startDate.replace("-","/"), self.endDate.replace("-","/")) + title)
         plt.errorbar(table.index, table['sys'], yerr = standardDeviation['sys'], label='systolic bp')
         plt.errorbar(table.index, table['dia'], yerr = standardDeviation['dia'], label='diastolic bp')
@@ -113,5 +123,5 @@ class Blood_pressure():
                                                                   self.date, fileName), bbox_inches="tight")
         if showImage:
             plt.show()
-        plt.clf()
+        plt.clf() # clean the figure
         return
